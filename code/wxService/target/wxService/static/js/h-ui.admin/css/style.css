@@ -1,0 +1,62 @@
+@charset "utf-8";
+/* 你自己的样式 */
+a:hover{text-decoration: none}
+.m_r10{margin-right: 10px;}
+.fl{float:left;}
+.fr{float:right;}
+/* ===========================页码    start=========================== */
+
+.page {
+	color: #438eb9;
+	margin-top:10px
+}
+
+.page ul {
+	display: inline-block;
+}
+
+.page ul li {
+	cursor: pointer;
+    display: inline-block;
+    margin-left: 2px;
+    text-align: center;
+    text-decoration: none;
+    color: #666;
+    height: 26px;
+    line-height: 26px;
+    text-decoration: none;
+    margin: 0 0 6px 6px;
+    padding: 0 10px;
+    font-size: 14px;
+}
+
+.total {
+	padding: 6px 0 6px 8px;
+	display: inline-block;
+}
+
+.page ul>.pgeLi {
+	border: 1px solid #438eb9;
+	color: #438eb9!important;
+}
+
+.page ul>.pgeLi>a {
+	color: #438eb9!important;
+}
+
+.page ul>.on {
+	background-color: #438eb9;
+	color: #fdfffd !important;
+}
+
+.page ul>.on>a {
+	color: #fdfffd !important;
+}
+
+.page ul>.previous,.page ul>.next{
+	border: 1px solid #ccc;
+}
+.page ul>.next>a,.page ul>.previous>a{
+	color:#333!important;
+}
+/* ===========================页码    end=========================== */

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+    http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- mvc的注解驱动 -->
+	<mvc:annotation-driven />
+
+	<!-- 处理controller不处理的 -->
+	<mvc:default-servlet-handler />
+
+	<!-- 处理静态资源 -->
+	<mvc:resources mapping="/static/**" location="/static/" />
+	<mvc:resources mapping="/upload/**" location="/upload/" />
+	<mvc:resources mapping="/public/**" location="/public/" />
+
+	<!-- 设置自动扫描的路径,用于自动注入bean 这里的路径与自己的项目目录对应 -->
+	<!-- 扫描controller路由控制器 -->
+	<context:component-scan base-package="com.lws.web.controller" />
+	<context:component-scan base-package="com.lws.domain" />
+
+
+	<!-- 视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/view/" />  <!-- 视图文件的文件夹路径 -->
+		<property name="suffix" value=".jsp" />            <!-- 视图文件类型 -->
+	</bean>
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8" />
+		<property name="maxUploadSize" value="10485760000" />
+		<property name="maxInMemorySize" value="40960" />
+	</bean>
+	<!-- 拦截器配置 -->
+	<mvc:interceptors>
+		<!-- 国际化操作拦截器 如果采用基于（请求/Session/Cookie）则必需配置 -->
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
+
+		<!-- session 超时拦截器 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="com.lws.domain.interceptor.SessionTimeoutInterceptor">
+				<property name="allowUrls">
+					<list>
+						<!-- 如果请求中包含以下路径，则不进行拦截 -->
+						<value>/login</value>
+						<value>/checklogin</value>
+						<value>/static</value>
+						<value>/wxQueryArticlePanel</value>
+						<value>/wxEditArticlePanel</value>
+						<value>/wxMainPanel</value>
+						<value>/findWxArticle</value>
+						<value>/findArticleById</value>
+						<value>/wechat</value>
+						<value>/upload</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!-- 自定义异常处理，SimpleMappingExceptionResolver这个类可以是个空类，但是要写，方便在java代码里面使用 -->
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="com.lws.domain.interceptor.SessionTimeoutException">redirect:/login.do</prop>
+			</props>
+		</property>
+	</bean>
+</beans>
