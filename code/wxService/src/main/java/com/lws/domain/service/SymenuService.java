@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,10 +22,25 @@ public class SymenuService {
 	@Resource
 	SymenuDAO symenuDAO;
 
+	public void createSQl(String sql) {
+		SQLQuery query = symenuDAO.getCurrentSession().createSQLQuery(sql);
+		query.executeUpdate();
+	}
+
 	public List findAll(Long sessionUserid) {
 		List entitylist = new ArrayList();
 		try {
 			entitylist = this.symenuDAO.findAll(sessionUserid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return entitylist;
+	}
+
+	public List findAll() {
+		List entitylist = new ArrayList();
+		try {
+			entitylist = this.symenuDAO.findAll();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -73,5 +89,13 @@ public class SymenuService {
 
 	public void save(Symenu symenu) throws Exception {
 		this.symenuDAO.save(symenu);
+	}
+
+	public void deleteById(Long id) throws Exception {
+		this.symenuDAO.deleteById(id);
+	}
+
+	public List insertRoleMenu(Long id) throws Exception {
+		return symenuDAO.getCurrentSession().createSQLQuery("").list();
 	}
 }

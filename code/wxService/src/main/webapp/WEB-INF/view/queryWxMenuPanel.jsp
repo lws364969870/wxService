@@ -93,7 +93,6 @@ jQuery(document).ready(function() {
    var  defaulKey = new Object();
 	 	defaulKey.key = "<%=defaulKey%>"
 	 	defaulKey.iv = "<%=defaulIv%>"
-    
 	var init = function(){
 		jsonDataList.url = "findLevelWxMenu";
 		jsonDataList.data = encryptionFun({},defaulKey.key,defaulKey.iv);

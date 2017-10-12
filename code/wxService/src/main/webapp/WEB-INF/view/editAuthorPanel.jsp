@@ -47,7 +47,7 @@ String sessionIv = sessionData.getSessionIv();
 	<input type="hidden" class="authorId"/>
 		<table>
 			<tr>
-				<th><span class="red">*</span>作者名称：</th>
+				<td><span class="red">*</span>作者名称：</td>
 				<td><input type="text" class="form-control authorName txtValidation" data-type="txtStr" data-value="作者名称不能为空"/></td>
 			</tr>
 		</table>

@@ -237,10 +237,10 @@ var init = function(page){
 					str += '<div class="btnDiv">';
 						str += '<button class="btn btn-primary  radius" onclick="creatUrl(\''+li[i]["articleId"]+'\');">生成URL</button>';
 						if(arr["wordbookCode"] == "H001001"){
-							str += '<button class="btn btn-success radius " onclick="article_shenqing(\'审批\',\''+li[i]["articleId"]+'\',\'H001003\');">审批通过</button>';  
-							str += '<button class="btn btn-primary  radius " onclick="article_edit(\'修改\',\'editArticlePanel\',\''+li[i]["articleId"]+'\');">修改</button>';
-							str += '<button class="btn btn-danger radius " onclick="article_del(\''+li[i]["articleId"]+'\');">删除</button>';
+							str += '<button class="btn btn-success radius " onclick="article_shenqing(\'审批\',\''+li[i]["articleId"]+'\',\'H001003\');">审批通过</button>'; 
 						}
+						str += '<button class="btn btn-primary  radius " onclick="article_edit(\'修改\',\'editArticlePanel\',\''+li[i]["articleId"]+'\');">修改</button>';
+						str += '<button class="btn btn-danger radius " onclick="article_del(\''+li[i]["articleId"]+'\');">删除</button>';
 						str += '<button class="btn btn-primary radius " onclick="preview_push(\''+li[i]["articleId"]+'\');">推送预览</button>'; 
 						if(sendFlagArr["wordbookCode"] == "H003001"){
 							str += '<button class="btn btn-danger radius " onclick="massTexting(\''+li[i]["articleId"]+'\');">群发</button>';
@@ -259,16 +259,19 @@ var init = function(page){
 	}
 }
 
+//群发
 var massTexting = function(str_id){
-	jsonDataList.url = "massMaterial";
-	jsonDataList.data = encryptionFun({articleId:str_id},userKey.key,userKey.iv);
-	jsonDataList.dataType = "text";
-	var res = showAjaxFun(jsonDataList,"");
-	res =  decryptionFun(res,userKey.key,userKey.iv);
-	layer.msg(res.message,{icon:1,time:3000});
-	if(res.flag == "1"){
-		init(currentPage);
-	}
+	layer.confirm('确认要群发吗？',function(index){
+		jsonDataList.url = "massMaterial";
+		jsonDataList.data = encryptionFun({articleId:str_id},userKey.key,userKey.iv);
+		jsonDataList.dataType = "text";
+		var res = showAjaxFun(jsonDataList,"");
+		res =  decryptionFun(res,userKey.key,userKey.iv);
+		layer.msg(res.message,{icon:1,time:3000});
+		if(res.flag == "1"){
+			init(currentPage);
+		}
+	});
 }
 
 

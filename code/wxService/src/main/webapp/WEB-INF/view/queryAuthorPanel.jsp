@@ -147,7 +147,7 @@ function article_add(title,url,w,h){
 		type: 2,
 		title: title,
 		content: [url,'no'],
-		area:['320px','150px'],
+		area:['400px','150px'],
 		btn:["添加","关闭"],
 		resize :false,
 		move :false,
@@ -166,10 +166,10 @@ function article_add(title,url,w,h){
 function article_del(id){
 	layer.confirm('确认要删除吗？',function(index){
 		jsonDataList.url = "deleteAuthor";
-		jsonDataList.data = {
-			authorId:id//传articleId主键
-		};
+		jsonDataList.data = encryptionFun({authorId:id},userKey.key,userKey.iv);
+		jsonDataList.dataType = "text";
 		var res = showAjaxFun(jsonDataList,"");
+			res =  decryptionFun(res,userKey.key,userKey.iv);
 		layer.msg(res.message,{icon:1,time:3000});
 		if(res.flag == "1"){
 			init(1);

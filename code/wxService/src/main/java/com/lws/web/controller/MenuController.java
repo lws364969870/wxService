@@ -1,20 +1,5 @@
 package com.lws.web.controller;
 
-import com.lws.domain.entity.Sylog;
-import com.lws.domain.entity.Symenu;
-import com.lws.domain.entity.SymenuV;
-import com.lws.domain.entity.Wxmenu;
-import com.lws.domain.model.DataResult;
-import com.lws.domain.model.SessionData;
-import com.lws.domain.service.SylogService;
-import com.lws.domain.service.SymenuService;
-import com.lws.domain.service.WxmenuService;
-import com.lws.domain.utils.CommonParameter;
-import com.lws.domain.utils.StringUtils;
-import com.lws.domain.utils.pwd.AES;
-import com.lws.domain.utils.request.CryptUtil;
-import com.lws.domain.utils.request.RequestUtil;
-
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +12,22 @@ import net.sf.json.JSONObject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.lws.domain.entity.Sylog;
+import com.lws.domain.entity.Symenu;
+import com.lws.domain.entity.Wxmenu;
+import com.lws.domain.model.DataResult;
+import com.lws.domain.model.SessionData;
+import com.lws.domain.service.SylogService;
+import com.lws.domain.service.SymenuService;
+import com.lws.domain.service.WxmenuService;
+import com.lws.domain.utils.CommonParameter;
+import com.lws.domain.utils.StringUtils;
+import com.lws.domain.utils.pwd.AES;
+import com.lws.domain.utils.request.CryptUtil;
+import com.lws.domain.utils.request.RequestUtil;
 
 @Controller
 public class MenuController {
@@ -336,5 +336,117 @@ public class MenuController {
 			}
 			return StringUtils.replaceBlank(s);
 		}
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/lwsFindAllMenu", method = RequestMethod.GET)
+	public Object doLwsFindAllMenu(HttpServletRequest request, HttpServletResponse response) {
+		return this.symenuService.findAll();
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/lwsAddMenu", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+	public String doLwsAddMenu(HttpServletRequest request, HttpServletResponse response) {
+		// response.setCharacterEncoding("UTF-8");
+		// lwsAddMenu?menuName=统计数据&menuTitle=统计数据&menuCode=10099&parentsCode=10000&menuLevel=2&menuUrl=queryArticlePanel?articleType=10099&sort=30
+		String menuName = request.getParameter("menuName");
+		String menuTitle = request.getParameter("menuTitle");
+		String menuCode = request.getParameter("menuCode");
+		String parentsCode = request.getParameter("parentsCode");
+		Integer menuLevel = Integer.valueOf(request.getParameter("menuLevel"));
+		String menuUrl = request.getParameter("menuUrl");
+		Integer sort = Integer.valueOf(request.getParameter("sort"));
+		if (StringUtils.isEmpty(menuName) || StringUtils.isEmpty(menuTitle) || StringUtils.isEmpty(menuCode) || StringUtils.isEmpty(parentsCode) || StringUtils.isEmpty(menuUrl) || null == sort) {
+			return "参数不全";
+		}
+		Symenu symenu = new Symenu();
+		symenu.setMenuName(menuName);
+		symenu.setMenuTitle(menuTitle);
+		symenu.setMenuCode(menuCode);
+		symenu.setParentsCode(parentsCode);
+		symenu.setMenuLevel(menuLevel);
+		symenu.setMenuUrl(menuUrl);
+		symenu.setIsDisable("N");
+		symenu.setIsCatalog("N");
+		symenu.setIsHide("N");
+		symenu.setSort(sort);
+		try {
+			symenuService.save(symenu);
+
+			symenuService.createSQl("delete from syrolemenu");
+			symenuService.createSQl("INSERT INTO syrolemenu ( syrolemenu.syroleId, syrolemenu.syMenuId, syrolemenu.isShow) SELECT syrole.syroleid, symenu.symenuid, 'Y' FROM syrole, symenu");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return "保存成功";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/lwsEditMenu", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+	public String doLwsEditMenu(HttpServletRequest request, HttpServletResponse response) {
+		// lwsEditMenu?syMenuId=xx&menuName=统计数据&menuTitle=统计数据&menuCode=10099&parentsCode=10000&menuLevel=2&menuUrl=queryArticlePanel?articleType=10099&sort=30
+		response.setCharacterEncoding("UTF-8");
+		String syMenuId = request.getParameter("syMenuId");
+		String menuName = request.getParameter("menuName");
+		String menuTitle = request.getParameter("menuTitle");
+		String menuCode = request.getParameter("menuCode");
+		String parentsCode = request.getParameter("parentsCode");
+		Integer menuLevel = Integer.valueOf(request.getParameter("menuLevel"));
+		String menuUrl = request.getParameter("menuUrl");
+		Integer sort = Integer.valueOf(request.getParameter("sort"));
+		if (StringUtils.isEmpty(syMenuId) || StringUtils.isEmpty(menuName) || StringUtils.isEmpty(menuTitle) || StringUtils.isEmpty(menuCode) || StringUtils.isEmpty(parentsCode)
+				|| StringUtils.isEmpty(menuUrl) || null == sort) {
+			return "参数不全";
+		}
+		Symenu symenu = new Symenu();
+		try {
+			symenu = symenuService.findById(Long.valueOf(syMenuId));
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return e1.getMessage();
+		}
+		symenu.setMenuName(menuName);
+		symenu.setMenuTitle(menuTitle);
+		symenu.setMenuCode(menuCode);
+		symenu.setParentsCode(parentsCode);
+		symenu.setMenuLevel(menuLevel);
+		symenu.setMenuUrl(menuUrl);
+		symenu.setIsDisable("N");
+		symenu.setIsCatalog("N");
+		symenu.setIsHide("N");
+		symenu.setSort(sort);
+		try {
+			symenuService.save(symenu);
+			symenuService.createSQl("delete from syrolemenu");
+			symenuService.createSQl("INSERT INTO syrolemenu ( syrolemenu.syroleId, syrolemenu.syMenuId, syrolemenu.isShow) SELECT syrole.syroleid, symenu.symenuid, 'Y' FROM syrole, symenu");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return "保存成功";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/lwsDeleteMenu", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+	public String doLwsDeleteMenu(HttpServletRequest request, HttpServletResponse response) {
+		// lwsDeleteMenu?syMenuId=xx
+		response.setCharacterEncoding("UTF-8");
+		String syMenuId = request.getParameter("syMenuId");
+		if (StringUtils.isEmpty(syMenuId)) {
+			return "参数不全";
+		}
+		try {
+			symenuService.deleteById(Long.valueOf(syMenuId));
+			symenuService.createSQl("delete from syrolemenu");
+			symenuService.createSQl("INSERT INTO syrolemenu ( syrolemenu.syroleId, syrolemenu.syMenuId, syrolemenu.isShow) SELECT syrole.syroleid, symenu.symenuid, 'Y' FROM syrole, symenu");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return "删除成功";
 	}
 }

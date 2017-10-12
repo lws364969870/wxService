@@ -1,0 +1,8 @@
+查询菜单
+lwsFindAllMenu
+新增菜单
+lwsAddMenu?menuName=ggg&menuTitle=ggg&menuCode=10099&parentsCode=10000&menuLevel=2&menuUrl=queryArticlePanel?articleType=10099&sort=30
+修改菜单
+lwsEditMenu?syMenuId=34&menuName=刚刚好&menuTitle=呵呵呵&menuCode=10099&parentsCode=10000&menuLevel=2&menuUrl=queryArticlePanel?articleType=10099&sort=30
+删除菜单
+lwsDeleteMenu?syMenuId=34

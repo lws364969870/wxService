@@ -5,6 +5,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";  
     String defaulKey =CryptUtil.getDefaultSessionKey();
 	String defaulIv =CryptUtil.getDefaultSessionIv();
+	
  %>  
 <!DOCTYPE html>
 <html>
@@ -71,7 +72,7 @@
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="mui-title">最新消息</h1>
+			<h1 class="mui-title wxTitle">最新消息</h1>
 		</header>
 		<div class="mui-content">
 			<div class="rich_media_area_primary">
@@ -109,8 +110,26 @@
 					$(".createDate").html(conversionTime(res.data.createDate.time));
 					$(".author").html(res.data.author);
 					$(".wx_content").html(res.data.content);
+					initLoad(res.data.articleType);
 				}
 			}
+			
+			var initLoad = function(articleType) {
+				jsonDataList.url = "queryMenuTitleByMenuCode";
+				jsonDataList.data = encryptionFun({menuCode:articleType},defaulKey.key,defaulKey.iv);
+				jsonDataList.dataType = "text";
+				var res = showAjaxFun(jsonDataList, "");
+					res = decryptionFun(res,defaulKey.key,defaulKey.iv);
+				if(res.flag == "1") {
+					if(res.data.length > 0) {
+						res = res.data;
+						for(idx in res) {
+							$(".wxTitle").html(res[idx]["menuName"]);
+						}
+					}
+				} 
+			}
+			
 			
 			window.onload = init();
 		</script>

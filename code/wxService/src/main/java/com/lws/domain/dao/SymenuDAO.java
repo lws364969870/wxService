@@ -1,16 +1,13 @@
 package com.lws.domain.dao;
 
-import com.lws.domain.base.BaseHibernateDAO;
-import com.lws.domain.entity.Syconfig;
-import com.lws.domain.entity.Symenu;
-import com.lws.domain.entity.SymenuV;
-
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+
+import com.lws.domain.base.BaseHibernateDAO;
+import com.lws.domain.entity.Symenu;
 
 @Repository
 public class SymenuDAO extends BaseHibernateDAO {
@@ -34,6 +31,16 @@ public class SymenuDAO extends BaseHibernateDAO {
 		return 0;
 	}
 
+	public List findAll() throws Exception {
+		try {
+			String queryString = "from Symenu ";
+			Query queryObject = getCurrentSession().createQuery(queryString);
+			return queryObject.list();
+		} catch (RuntimeException re) {
+			throw re;
+		}
+	}
+
 	public List findAll(Long sessionUserid) throws Exception {
 		try {
 			String queryString = "from SymenuV where syUserId = " + sessionUserid;
@@ -44,7 +51,7 @@ public class SymenuDAO extends BaseHibernateDAO {
 		}
 	}
 
-	public List findLevelMenu(int level,Long sessionUserid) throws Exception {
+	public List findLevelMenu(int level, Long sessionUserid) throws Exception {
 		try {
 			String queryString = "from SymenuV where menuLevel = ? and syUserId = ?";
 			Query queryObject = getCurrentSession().createQuery(queryString);
